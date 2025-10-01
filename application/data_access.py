@@ -41,7 +41,7 @@ def get_joke():
     connection = get_connection()
     joke = ()
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM vGetJokes")
+        cursor.execute("SELECT * FROM vGetJokes ORDER BY RAND()")
         joke = cursor.fetchone()
     connection.close()
     return joke
