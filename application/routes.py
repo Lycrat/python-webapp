@@ -1,7 +1,7 @@
 from flask import render_template
 import random
 from application import app
-from application.data_access import get_joke
+from application.data_access import get_joke, get_jokes_count
 
 @app.route('/')
 @app.route('/home')
@@ -17,8 +17,8 @@ def welcome(name='Team'):
 @app.route('/joke')
 def joke():
     joke = get_joke()
-    return render_template('joke.html', title="Joke Time", joke_question=joke[1], joke_answer=joke[2], number_of_jokes=len(joke_dict))
-
+    count = get_jokes_count()
+    return render_template('joke.html', title="Joke Time", joke_question=joke[1], joke_answer=joke[2], number_of_jokes=count[0])
 
 joke_dict = {0: ["Why was Cinderella so bad a football?", "She kept running away from the ball!"],
              1: ["What do you call a pile of cats?", "A meow-ntain"],

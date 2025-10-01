@@ -45,3 +45,13 @@ def get_joke():
         joke = cursor.fetchone()
     connection.close()
     return joke
+
+def get_jokes_count():
+    connection = get_connection()
+    count = 0
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT COUNT(*) FROM jokes")
+        count = cursor.fetchone() 
+    connection.close()
+
+    return count
