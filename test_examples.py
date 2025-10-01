@@ -84,4 +84,13 @@ def test_joke_count():
         assert b"21" in response.data
 
 
+def test_unknown_route_returns_404():
+    with app.test_client() as client:
+        res = client.get('/this-route-does-not-exist')
+        assert res.status_code == 404
 
+
+def test_joke_post_returns_405():
+    with app.test_client() as client:
+        res = client.post('/joke')
+        assert res.status_code == 405
