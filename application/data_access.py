@@ -20,8 +20,9 @@ def get_connection():
     )
     return connection
 
+
+connection = get_connection()
 try:
-    connection = get_connection()
     with connection.cursor() as cursor:
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
         cursor.execute(f"use {DB_NAME}")
