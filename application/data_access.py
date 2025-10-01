@@ -20,6 +20,13 @@ connection = pymysql.connect(
 try:
     with connection.cursor() as cursor:
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
+        cursor.execute(f"use {DB_NAME}")
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS jokes (
+                       ID int auto_increment,
+                       Setup varchar(255),
+                       Punchline varchar(255),
+                       PRIMARY KEY (ID)
+                       )""") 
         print(f"Database '{DB_NAME}' created or already exists.")
 finally:
     connection.close()
