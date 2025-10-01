@@ -11,13 +11,17 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 
 # Connect to MySQL server
-connection = pymysql.connect(
-    host=DB_HOST,
-    user=DB_USER,
-    password=DB_PASSWORD
-)
+def get_connection():
+    connection = pymysql.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
+    )
+    return connection
 
 try:
+    connection = get_connection()
     with connection.cursor() as cursor:
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
         cursor.execute(f"use {DB_NAME}")
@@ -30,3 +34,13 @@ try:
         print(f"Database '{DB_NAME}' created or already exists.")
 finally:
     connection.close()
+
+
+def get_joke():
+    connection = get_connection()
+    joke = ()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM vGetJokes")
+        joke = cursor.fetchone()
+    connection.close()
+    return joke
