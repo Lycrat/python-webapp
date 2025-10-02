@@ -166,6 +166,8 @@ def submit_register():
         hashed_pass = bcrypt.hashpw(password_bytes, salt)
 
         add_user(username, hashed_pass)
+    
+    return redirect(url_for('register'))
 
 
 
