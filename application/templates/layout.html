@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -13,7 +12,9 @@
       rel="shortcut icon"
       href="{{ url_for('static', filename='favicon.ico') }}"
     />
-  <body>
+    <title>{{ title }}</title>
+  </head>
+  <body class="dark-theme">
     <nav>
       <ul>
         <li><a href="/home">Home</a></li>
@@ -25,9 +26,9 @@
         <li><a href="/register">Register</a></li>
       </ul>
     </nav>
-  </head>
-    {% block body_content %} {% endblock %}
-    <hr />
+    <main>
+      {% block body_content %} {% endblock %}
+    </main>
     <footer>
       <p>Version: 3</p>
       <p>&copy; 2025</p>

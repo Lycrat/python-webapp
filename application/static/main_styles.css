@@ -73,3 +73,44 @@ li a:hover:not(.active) {
   background-color: #111;
 }
 
+body.dark-theme {
+  background-color: #1e222a;
+  color: #abb2bf;
+  font-family: "Fira Code", monospace;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  background-color: #282c34;
+}
+
+nav ul li {
+  margin: 0;
+  padding: 0.5rem 1rem;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #98c379;
+}
+
+nav ul li a:hover {
+  color: #61afef;
+}
+
+main {
+  padding: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #282c34;
+  color: #abb2bf;
+}
+
