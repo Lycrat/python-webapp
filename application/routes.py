@@ -27,7 +27,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         token = request.cookies.get('token')
         if not token:
-            return redirect(url_for('not_logged_in'))
+            return redirect(url_for('not_logged_in')), 403
         try:
             payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=[JWT_ALGORITHM])
 
