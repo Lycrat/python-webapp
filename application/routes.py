@@ -6,7 +6,7 @@ import datetime
 from functools import wraps
 from flask import render_template, request, redirect, url_for, make_response, jsonify
 from application import app
-from application.data_access import get_joke, get_jokes_count, get_user_by_username
+from application.data_access import get_joke, get_jokes_count, get_user
 
 
 @app.route('/logout')
@@ -92,18 +92,17 @@ def hello():
 JWT_SECRET = os.getenv('JWT_SECRET', 'dev_secret_key')
 JWT_ALGORITHM = 'HS256'
 
-# Dummy user for demonstration
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    print("login")
     error = None
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        user = get_user_by_username(username)
-        if user and password == user[2]:  # user[2] is password from DB
+        user = get_user(username)
+        if user and password == user[0]:
             try:
+                print("Logged in successfully")
                 payload = {
                     'username': username,
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
@@ -113,6 +112,7 @@ def login():
                     token = token.decode('utf-8')
                 resp = make_response(redirect(url_for('dashboard')))
                 resp.set_cookie('jwt_token', token, httponly=True, samesite='Lax')
+
                 return resp
             except Exception as e:
                 error = 'Internal error during login.'
