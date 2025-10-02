@@ -81,7 +81,7 @@ def add_user(username, password):
     connection = get_connection()
     try:
         with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+            cursor.execute("CALL pAddUser(%s, %s)",
             (username, password)
             )
             connection.commit()
