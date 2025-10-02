@@ -9,23 +9,27 @@ from flask import render_template, request, redirect, url_for, make_response, js
 from application import app
 from application.data_access import get_joke, get_jokes_count, get_user
 
-@app.route('/logout')
-def logout():
+@app.route('/logout/submit', methods=['POST'])
+def submit_logout():
+    print("REACHED")
     resp = make_response(redirect(url_for('login')))
-    resp.set_cookie('jwt_token', '', expires=0)
+    resp.set_cookie('token', '', expires=0)
     return resp
 
+@app.route('/logout')
+def logout():
+   return render_template('logout.html', title="logout" ) 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        token = request.cookies.get('jwt_token')
+        token = request.cookies.get('token')
         if not token:
             return redirect(url_for('login'))
         try:
-            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=[JWT_ALGORITHM])
 
-            return f(*args, **kwargs, user=payload['username'])
+            return f(*args, **kwargs, user=payload['user'])
         except jwt.ExpiredSignatureError:
             return redirect(url_for('login'))
         except jwt.InvalidTokenError:
@@ -94,12 +98,23 @@ JWT_ALGORITHM = 'HS256'
 
 @app.route('/login')
 def login():
+    token = request.cookies.get('token')
+    if token:
+        try:
+            jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            return redirect(url_for('logout'))
+        except jwt.ExpiredSignatureError:
+            pass
+        except jwt.InvalidTokenError:
+            pass
     return render_template('login.html', title='Login')
 
 @app.route('/login/submit', methods=['POST'])
 def submit_login():
     
     print("login POST received")
+    
+        
     error = None
     if request.method == 'POST':
         username = request.form.get('username')
@@ -111,14 +126,16 @@ def submit_login():
                 'user': username,
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
             }, app.config['SECRET_KEY'], algorithm='HS256')
-            response = make_response(redirect(url_for('joke')))
+            response = make_response(redirect(url_for('logout')))
             response.set_cookie('token', token, httponly=True, secure=True)
             print("logged in")
             return response
 
     return redirect(url_for('login'))
+
 @app.route('/add-joke')
-def add_joke():
+@login_required
+def add_joke(user):
     return render_template('add_joke.html', title='Add Joke')
 
 @app.route('/add-joke/submit', methods=['POST'])
@@ -130,3 +147,5 @@ def submit_joke():
     add_joke_to_database(setup, punchline)
     print(f"added joke: {setup}, {punchline}")
     return redirect(url_for('add_joke'))
+
+    
