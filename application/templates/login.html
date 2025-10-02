@@ -1,80 +1,16 @@
 {% extends "layout.html" %} {% block body_content %}
 <h2>Login</h2>
-<form id="loginForm" method="post" action="/login/submit" novalidate>
+<form method="post" action="/login/submit">
   <div>
     <label for="username">Username:</label>
-    <input
-      type="text"
-      id="username"
-      name="username"
-      required
-      minlength="3"
-      maxlength="30"
-      pattern="[A-Za-z0-9._%+\-]{3,30}"
-      title="3–30 chars: letters, numbers and . _ % + -"
-      aria-describedby="usernameHelp usernameError"
-    />
-    <small id="usernameHelp"></small>
-    <div class="error" id="usernameError" aria-live="polite"></div>
+    <input type="text" id="username" name="username" />
   </div>
   <div>
     <label for="password">Password:</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      required
-      minlength="8"
-      pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}"
-      title="At least 8 chars, include upper & lower case, a number and a symbol"
-      aria-describedby="passwordHelp passwordError"
-    />
-    <small id="passwordHelp"></small>
-    <div class="error" id="passwordError" aria-live="polite"></div>
+    <input type="password" id="password" name="password" />
   </div>
   <div>
     <button type="submit">Login</button>
   </div>
 </form>
-
-<style>
-.error { color: #b00020; font-size: 0.9em; margin-top: 4px; }
-input.invalid { outline: none; border: 1px solid #b00020; box-shadow: 0 0 0 2px rgba(176,0,32,0.06); }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('loginForm');
-  const username = document.getElementById('username');
-  const password = document.getElementById('password');
-
-  function showError(input, message) {
-    const err = document.getElementById(input.id + 'Error');
-    input.classList.toggle('invalid', !!message);
-    err.textContent = message || '';
-  }
-
-  function validateInput(input) {
-    if (input.validity.valueMissing) return 'This field is required.';
-    if (input.validity.tooShort) return `Must be at least ${input.getAttribute('minlength')} characters.`;
-    if (input.validity.tooLong) return `Must be at most ${input.getAttribute('maxlength')} characters.`;
-    if (input.validity.patternMismatch) return input.getAttribute('title') || 'Invalid format.';
-    return '';
-  }
-
-  username.addEventListener('input', () => showError(username, validateInput(username)));
-  password.addEventListener('input', () => showError(password, validateInput(password)));
-
-  form.addEventListener('submit', function (e) {
-    const uErr = validateInput(username);
-    const pErr = validateInput(password);
-    showError(username, uErr);
-    showError(password, pErr);
-    if (uErr || pErr) {
-      e.preventDefault();
-      (uErr ? username : password).focus();
-    }
-  });
-});
-</script>
 {% endblock %}
