@@ -27,15 +27,15 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         token = request.cookies.get('token')
         if not token:
-            return redirect(url_for('not_logged_in')), 403
+            return render_template('must_login.html', title="Not logged in"), 403
         try:
             payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=[JWT_ALGORITHM])
 
             return f(*args, **kwargs, user=payload['user'])
         except jwt.ExpiredSignatureError:
-            return redirect(url_for('not_logged_in'))
+            return render_template('must_login.html', title="Not logged in"), 403
         except jwt.InvalidTokenError:
-            return redirect(url_for('not_logged_in'))
+            return render_template('must_login.html', title="Not logged in"), 403
     return decorated_function
 
 
