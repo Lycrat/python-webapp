@@ -9,7 +9,6 @@ DB_USER = os.getenv("DB_USER")
 DB_NAME = os.getenv("DB_NAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-
 # Connect to MySQL server
 def get_connection():
     connection = pymysql.connect(
