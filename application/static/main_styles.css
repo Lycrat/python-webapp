@@ -1,116 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
-    background-color: linen;
-    margin: 20px;
-    font-family: Cambria, Verdana, Cochin, Georgia, Times, 'Times New Roman', serif;
+  background: url('../static/dirt.webp') repeat;
+  margin: 0;
+  font-family: 'Press Start 2P', monospace;
+  color: #f0f0f0;
 }
 
-h1 { color: maroon;
+h1 {
+  color: #ff5555;
+  text-shadow: 2px 2px #000;
 }
 
-h2 { color: mediumvioletred;
+h2 {
+  color: #ffaa00;
+  text-shadow: 1px 1px #000;
 }
 
-footer > p { color: white;
-               font-size: smaller;
-    }
+footer > p {
+  color: #ccc;
+  font-size: smaller;
+}
 
 footer {
-   position: fixed;
-   left: 0;
-   bottom: 0;
-   width: 100%;
-   background-color: darkgray;
-   text-align: center;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #2e2e2e;
+  text-align: center;
+  font-size: 0.8em;
+  border-top: 4px solid #8b4513;
 }
 
-.joke { background-color: cadetblue;
-        padding: 1%;
-        color: white;
-        font-family: Verdana, serif;
+.joke {
+  background-color: #3c3f41;
+  padding: 1rem;
+  border: 8px solid #8b4513;
+  box-shadow: 0 0 12px #000;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
 }
+
 .question {
-        font-weight: bolder;
+  font-weight: bold;
+  color: #00ffcc;
 }
 
 .button {
-  background-color: DarkGoldenrod;
-  border: none;
+  background-color: #d7a100;
+  border: 2px solid #8b4513;
   color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 12px;
+  border-radius: 4px;
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
 }
 
 .button:hover {
-  background-color: DarkKhaki;
-  color: white;
+  background-color: #e6c200;
+  color: #000;
 }
 
 ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  background-color: #333;
+  background-color: #282c34;
+  display: flex;
+  justify-content: center;
+  border-bottom: 4px solid #8b4513;
 }
 
 li {
-  float: left;
+  margin: 0;
 }
 
 li a {
   display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-li a:hover:not(.active) {
-  background-color: #111;
-}
-
-body.dark-theme {
-  background-color: #1e222a;
-  color: #abb2bf;
-  font-family: "Fira Code", monospace;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  background-color: #282c34;
-}
-
-nav ul li {
-  margin: 0;
-  padding: 0.5rem 1rem;
-}
-
-nav ul li a {
-  text-decoration: none;
   color: #98c379;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-family: 'Press Start 2P', monospace;
 }
 
-nav ul li a:hover {
+li a:hover {
+  background-color: #3c3f41;
   color: #61afef;
 }
 
 main {
-  padding: 1rem;
-}
-
-footer {
+  margin: 40px auto;
+  width: 90%;
+  max-width: 800px;
+  padding: 30px;
+  background: #3c3f41;
+  border: 12px solid #8b4513;
+  box-shadow: 0 0 30px #000;
+  border-radius: 8px;
   text-align: center;
-  padding: 1rem;
-  background-color: #282c34;
-  color: #abb2bf;
 }
-
