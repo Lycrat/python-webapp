@@ -33,6 +33,15 @@ try:
                        PRIMARY KEY (ID)
                        )""") 
         print(f"Database '{DB_NAME}' created or already exists.")
+
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT,
+                username VARCHAR(50) NOT NULL UNIQUE,
+                password_hash VARCHAR(255) NOT NULL,
+                PRIMARY KEY (id)
+            )
+        """)
 finally:
     connection.close()
 
@@ -66,3 +75,29 @@ def add_joke_to_database(setup, punchline):
         print(e)
     finally:
         connection.close()
+
+
+def add_user(username, password):
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+            (username, password)
+            )
+            connection.commit()
+    finally:
+            connection.close()
+
+def get_user(username):
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+            return cursor.fetchone()
+    finally:
+            connection.close()
+
+
+
+
+
