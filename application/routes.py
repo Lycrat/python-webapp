@@ -7,7 +7,8 @@ import datetime
 from functools import wraps
 from flask import render_template, request, redirect, url_for, make_response, jsonify
 from application import app
-from application.data_access import get_joke, get_jokes_count, get_user
+from application.data_access import get_joke, get_jokes_count, get_user, add_user
+import bcrypt
 
 @app.route('/logout/submit', methods=['POST'])
 def submit_logout():
@@ -118,9 +119,11 @@ def submit_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        password_bytes = password.encode('utf-8')
         user = get_user(username)
+        hashed_pass_bytes = user[2].encode('utf-8')
         print(f"User lookup for '{username}': {user}")
-        if user and username == user[1] and password == user[2]:
+        if user and username == user[1] and bcrypt.checkpw(password_bytes, hashed_pass_bytes):
             token = jwt.encode({
                 'user': username,
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
@@ -151,6 +154,18 @@ def submit_joke():
 @app.route('/register')
 def register():
     return render_template('add_user.html', title="Register")
+
+@app.route('/register/submit', methods=['POST'])
+def submit_register():
+    if request.method == 'POST':
+        username = request.form.get('username')    
+        password = request.form.get('password')
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+
+        hashed_pass = bcrypt.hashpw(password_bytes, salt)
+
+        add_user(username, hashed_pass)
 
 
 

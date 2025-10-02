@@ -81,9 +81,7 @@ def add_user(username, password):
     connection = get_connection()
     try:
         with connection.cursor() as cursor:
-            cursor.execute("CALL pAddUser(%s, %s)",
-            (username, password)
-            )
+            cursor.execute("CALL pAddUser(%s, %s);",(username, password))
             connection.commit()
     finally:
             connection.close()
