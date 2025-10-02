@@ -54,6 +54,19 @@ def test_welcome_page_with_team():
         assert b"Welcome Everyone!" in response.data
         assert b"Version" in response.data
 
+def test_must_login_page():
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/add-joke' page is requested (GET)
+    THEN check that the response is valid
+    
+    If not logged in then /add-joke endpoint would throw a 403 and redirect to
+    /not-logged-in-error
+    """
+    
+    with app.test_client() as test_client:
+        response = test_client.get('/add-joke')
+        assert response.status_code == 403
 
 def test_jokes_page():
     """

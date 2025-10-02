@@ -9,7 +9,6 @@ DB_USER = os.getenv("DB_USER")
 DB_NAME = os.getenv("DB_NAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-
 # Connect to MySQL server
 def get_connection():
     connection = pymysql.connect(
@@ -70,6 +69,7 @@ def add_joke_to_database(setup, punchline):
     try:
         with connection.cursor() as cursor:
             cursor.execute("CALL pAddJoke(%s, %s);", (setup, punchline))
+            connection.commit()
             print("added joke to database")
     except Exception as e:
         print(e)

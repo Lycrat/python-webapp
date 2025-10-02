@@ -1,5 +1,5 @@
 {% extends "layout.html" %} {% block body_content %}
-<h2>You're logged in</h2>
+<h2>{{username}} You're logged in</h2>
 <form method="post" action="/logout/submit">
   <button type="submit">Log out</button>
 </form>

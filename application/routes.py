@@ -19,24 +19,29 @@ def submit_logout():
 
 @app.route('/logout')
 def logout():
-   return render_template('logout.html', title="logout" ) 
+   username = request.args.get('username')
+   return render_template('logout.html', title="logout", username=username) 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         token = request.cookies.get('token')
         if not token:
-            return redirect(url_for('login'))
+            return render_template('must_login.html', title="Not logged in"), 403
         try:
             payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=[JWT_ALGORITHM])
 
             return f(*args, **kwargs, user=payload['user'])
         except jwt.ExpiredSignatureError:
-            return redirect(url_for('login'))
+            return render_template('must_login.html', title="Not logged in"), 403
         except jwt.InvalidTokenError:
-            return redirect(url_for('login'))
+            return render_template('must_login.html', title="Not logged in"), 403
     return decorated_function
 
+
+@app.route('/not-logged-in-error')
+def not_logged_in():
+    return render_template('must_login.html', title="Not logged in")
 
 @app.route('/dashboard')
 @login_required
@@ -102,8 +107,8 @@ def login():
     token = request.cookies.get('token')
     if token:
         try:
-            jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            return redirect(url_for('logout'))
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            return redirect(url_for('logout', username=payload['user']))
         except jwt.ExpiredSignatureError:
             pass
         except jwt.InvalidTokenError:
@@ -126,7 +131,7 @@ def submit_login():
                 'user': username,
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
             }, app.config['SECRET_KEY'], algorithm='HS256')
-            response = make_response(redirect(url_for('logout')))
+            response = make_response(redirect(url_for('logout', username=username)))
             response.set_cookie('token', token, httponly=True, secure=False)
             print("logged in")
             return response
@@ -151,7 +156,9 @@ def submit_joke():
     
 @app.route('/register')
 def register():
-    return render_template('add_user.html', title="Register")
+    success = request.args.get('success') == 'True'
+    print(success)
+    return render_template('add_user.html', title="Register", success=success)
 
 @app.route('/register/submit', methods=['POST'])
 def submit_register():
@@ -165,7 +172,7 @@ def submit_register():
 
         add_user(username, hashed_pass)
     
-    return redirect(url_for('register'))
+    return redirect(url_for('register', success=True))
 
 
 
