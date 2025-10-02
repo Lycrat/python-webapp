@@ -1,0 +1,13 @@
+{% extends "layout.html" %} {% block body_content %}
+
+<form method="POST" action="http://localhost:5000/add-joke/submit">
+  <label for="setup">Joke Setup:</label>
+  <input type="text" name="setup" id="setup" required />
+
+  <label for="punchline">Joke Punchline:</label>
+  <input type="text" name="punchline" id="punchline" required />
+
+  <button type="submit">Submit</button>
+</form>
+
+{% endblock %}

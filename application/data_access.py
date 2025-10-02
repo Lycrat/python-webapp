@@ -55,3 +55,14 @@ def get_jokes_count():
     connection.close()
 
     return count
+
+def add_joke_to_database(setup, punchline):
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("CALL pAddJoke(%s, %s);", (setup, punchline))
+            print("added joke to database")
+    except Exception as e:
+        print(e)
+    finally:
+        connection.close()

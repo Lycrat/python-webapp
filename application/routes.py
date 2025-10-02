@@ -1,7 +1,7 @@
-from flask import render_template
+from flask import render_template, request, redirect, url_for
 import random
 from application import app
-from application.data_access import get_joke, get_jokes_count
+from application.data_access import get_joke, get_jokes_count, add_joke_to_database
 
 @app.route('/')
 @app.route('/home')
@@ -47,3 +47,17 @@ joke_dict = {0: ["Why was Cinderella so bad a football?", "She kept running away
 @app.route('/hello')
 def hello():
     return render_template('hello.html', title='Hello')
+
+@app.route('/add-joke')
+def add_joke():
+    return render_template('add_joke.html', title='Add Joke')
+
+@app.route('/add-joke/submit', methods=['POST'])
+def submit_joke():
+    setup = request.form['setup']
+    punchline = request.form['punchline']
+    
+    
+    add_joke_to_database(setup, punchline)
+    print(f"added joke: {setup}, {punchline}")
+    return redirect(url_for('add_joke'))
