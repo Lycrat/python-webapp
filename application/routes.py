@@ -19,7 +19,8 @@ def submit_logout():
 
 @app.route('/logout')
 def logout():
-   return render_template('logout.html', title="logout" ) 
+   username = request.args.get('username')
+   return render_template('logout.html', title="logout", username=username) 
 
 def login_required(f):
     @wraps(f)
@@ -102,8 +103,8 @@ def login():
     token = request.cookies.get('token')
     if token:
         try:
-            jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            return redirect(url_for('logout'))
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            return redirect(url_for('logout', username=payload['user']))
         except jwt.ExpiredSignatureError:
             pass
         except jwt.InvalidTokenError:
@@ -128,7 +129,7 @@ def submit_login():
                 'user': username,
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
             }, app.config['SECRET_KEY'], algorithm='HS256')
-            response = make_response(redirect(url_for('logout')))
+            response = make_response(redirect(url_for('logout', username=username)))
             response.set_cookie('token', token, httponly=True, secure=False)
             print("logged in")
             return response
