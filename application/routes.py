@@ -149,3 +149,6 @@ def submit_joke():
     return redirect(url_for('add_joke'))
 
     
+@app.route('/register')
+def register():
+    return render_template('add_user.html', title="Register")
