@@ -153,7 +153,9 @@ def submit_joke():
     
 @app.route('/register')
 def register():
-    return render_template('add_user.html', title="Register")
+    success = request.args.get('success') == 'True'
+    print(success)
+    return render_template('add_user.html', title="Register", success=success)
 
 @app.route('/register/submit', methods=['POST'])
 def submit_register():
@@ -167,7 +169,7 @@ def submit_register():
 
         add_user(username, hashed_pass)
     
-    return redirect(url_for('register'))
+    return redirect(url_for('register', success=True))
 
 
 

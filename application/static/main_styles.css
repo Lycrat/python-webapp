@@ -1,35 +1,44 @@
 body {
-    background-color: linen;
-    margin: 20px;
-    font-family: Cambria, Verdana, Cochin, Georgia, Times, 'Times New Roman', serif;
+  background-color: linen;
+  margin: 20px;
+  font-family: Cambria, Verdana, Cochin, Georgia, Times, "Times New Roman",
+    serif;
 }
 
-h1 { color: maroon;
+h1 {
+  color: maroon;
 }
 
-h2 { color: mediumvioletred;
+h2 {
+  color: mediumvioletred;
 }
 
-footer > p { color: white;
-               font-size: smaller;
-    }
+.success {
+  color: green;
+}
+
+footer > p {
+  color: white;
+  font-size: smaller;
+}
 
 footer {
-   position: fixed;
-   left: 0;
-   bottom: 0;
-   width: 100%;
-   background-color: darkgray;
-   text-align: center;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: darkgray;
+  text-align: center;
 }
 
-.joke { background-color: cadetblue;
-        padding: 1%;
-        color: white;
-        font-family: Verdana, serif;
+.joke {
+  background-color: cadetblue;
+  padding: 1%;
+  color: white;
+  font-family: Verdana, serif;
 }
 .question {
-        font-weight: bolder;
+  font-weight: bolder;
 }
 
 .button {
@@ -113,4 +122,3 @@ footer {
   background-color: #282c34;
   color: #abb2bf;
 }
-
