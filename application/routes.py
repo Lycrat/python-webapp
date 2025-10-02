@@ -127,7 +127,7 @@ def submit_login():
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
             }, app.config['SECRET_KEY'], algorithm='HS256')
             response = make_response(redirect(url_for('logout')))
-            response.set_cookie('token', token, httponly=True, secure=True)
+            response.set_cookie('token', token, httponly=True)
             print("logged in")
             return response
 
