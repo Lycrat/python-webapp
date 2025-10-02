@@ -1,3 +1,4 @@
+from werkzeug.security import check_password_hash
 from flask import render_template, request, redirect, url_for
 import random
 import os
@@ -7,7 +8,6 @@ from functools import wraps
 from flask import render_template, request, redirect, url_for, make_response, jsonify
 from application import app
 from application.data_access import get_joke, get_jokes_count, get_user
-
 
 @app.route('/logout')
 def logout():
@@ -94,29 +94,37 @@ JWT_ALGORITHM = 'HS256'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print("login")
+    print("login POST received")
     error = None
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         user = get_user(username)
-        if user and password == user[0]:
-            try:
-                print("Logged in successfully")
-                payload = {
-                    'username': username,
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                }
-                token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-                if isinstance(token, bytes):
-                    token = token.decode('utf-8')
-                resp = make_response(redirect(url_for('dashboard')))
-                resp.set_cookie('jwt_token', token, httponly=True, samesite='Lax')
-
-                return resp
-            except Exception as e:
-                error = 'Internal error during login.'
+        print(f"User lookup for '{username}': {user}")
+        if user:
+            # user[1] = username, user[2] = password_hash
+            stored_hash = user[2] if len(user) > 2 else None
+            if stored_hash and check_password_hash(stored_hash, password):
+                try:
+                    print("Password correct, logging in.")
+                    payload = {
+                        'username': username,
+                        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                    }
+                    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+                    if isinstance(token, bytes):
+                        token = token.decode('utf-8')
+                    resp = make_response(redirect(url_for('dashboard')))
+                    resp.set_cookie('jwt_token', token, httponly=True, samesite='Lax')
+                    return resp
+                except Exception as e:
+                    print(f"Login error: {e}")
+                    error = 'Internal error during login.'
+            else:
+                print("Password incorrect.")
+                error = 'Invalid username or password.'
         else:
+            print("User not found.")
             error = 'Invalid username or password.'
     return render_template('login.html', title='Login', error=error)
 
