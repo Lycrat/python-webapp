@@ -127,7 +127,7 @@ def submit_login():
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
             }, app.config['SECRET_KEY'], algorithm='HS256')
             response = make_response(redirect(url_for('logout')))
-            response.set_cookie('token', token, httponly=True, secure=True)
+            response.set_cookie('token', token, httponly=True, secure=False)
             print("logged in")
             return response
 
@@ -152,3 +152,37 @@ def submit_joke():
 @app.route('/register')
 def register():
     return render_template('add_user.html', title="Register")
+
+
+
+@app.route('/error/<int:code>')
+def error_code(code):
+    error_messages = {
+        404: 'Resource not found.',
+        500: 'Internal server error.',
+        403: 'Forbidden.',
+        401: 'Unauthorized.',
+    }
+    message = error_messages.get(code, 'Unknown error.')
+    return jsonify({
+        'status': 'error',
+        'code': code,
+        'message': message
+    }), code
+
+@app.route('/user/<string:username>')
+def user_info(username):
+    user = get_user(username)
+    if user:
+        return jsonify({
+            'status': 'success',
+            'data': {
+                'id': user[0],
+                'username': user[1],
+                'roles': ['user']
+            }
+        })
+    return jsonify({
+        'status': 'error',
+        'message': 'User not found.'
+    }), 404
