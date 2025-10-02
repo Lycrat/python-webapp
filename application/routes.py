@@ -113,8 +113,6 @@ def login():
 @app.route('/login/submit', methods=['POST'])
 def submit_login():
     print("login POST received")
-    
-        
     error = None
     if request.method == 'POST':
         username = request.form.get('username')
