@@ -55,3 +55,18 @@ def get_jokes_count():
     connection.close()
 
     return count
+
+
+# User authentication: fetch user by username
+def get_user_by_username(username):
+    connection = get_connection()
+    user = None
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT ID, username, password FROM users WHERE username = %s
+            """, (username,))
+            user = cursor.fetchone()
+    finally:
+        connection.close()
+    return user

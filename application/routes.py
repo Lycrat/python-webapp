@@ -1,7 +1,43 @@
-from flask import render_template
 import random
+import os
+import jwt
+import datetime
+from functools import wraps
+from flask import render_template, request, redirect, url_for, make_response, jsonify
 from application import app
-from application.data_access import get_joke, get_jokes_count
+from application.data_access import get_joke, get_jokes_count, get_user_by_username
+
+
+@app.route('/logout')
+def logout():
+    resp = make_response(redirect(url_for('login')))
+    resp.set_cookie('jwt_token', '', expires=0)
+    return resp
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.cookies.get('jwt_token')
+        if not token:
+            return redirect(url_for('login'))
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+
+            return f(*args, **kwargs, user=payload['username'])
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for('login'))
+        except jwt.InvalidTokenError:
+            return redirect(url_for('login'))
+    return decorated_function
+
+
+@app.route('/dashboard')
+@login_required
+def dashboard(user=None):
+    return render_template('welcome.html', title='Dashboard', name=user, group='Authenticated Users')
+
+
 
 @app.route('/')
 @app.route('/home')
@@ -47,3 +83,37 @@ joke_dict = {0: ["Why was Cinderella so bad a football?", "She kept running away
 @app.route('/hello')
 def hello():
     return render_template('hello.html', title='Hello')
+
+
+
+# Secret key for JWT encoding/decoding (will use env later)
+JWT_SECRET = os.getenv('JWT_SECRET', 'dev_secret_key')
+JWT_ALGORITHM = 'HS256'
+
+# Dummy user for demonstration
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = get_user_by_username(username)
+        if user and password == user[2]:  # user[2] is password from DB
+            try:
+                payload = {
+                    'username': username,
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                }
+                token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+                if isinstance(token, bytes):
+                    token = token.decode('utf-8')
+                resp = make_response(redirect(url_for('dashboard')))
+                resp.set_cookie('jwt_token', token, httponly=True, samesite='Lax')
+                return resp
+            except Exception as e:
+                error = 'Internal error during login.'
+        else:
+            error = 'Invalid username or password.'
+    return render_template('login.html', title='Login', error=error)
