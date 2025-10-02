@@ -33,6 +33,15 @@ try:
                        PRIMARY KEY (ID)
                        )""") 
         print(f"Database '{DB_NAME}' created or already exists.")
+
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT,
+                username VARCHAR(50) NOT NULL UNIQUE,
+                password_hash VARCHAR(255) NOT NULL,
+                PRIMARY KEY (id)
+            )
+        """)
 finally:
     connection.close()
 
@@ -56,17 +65,39 @@ def get_jokes_count():
 
     return count
 
-
-# User authentication: fetch user by username
-def get_user_by_username(username):
+def add_joke_to_database(setup, punchline):
     connection = get_connection()
-    user = None
     try:
         with connection.cursor() as cursor:
-            cursor.execute("""
-                SELECT ID, username, password FROM users WHERE username = %s
-            """, (username,))
-            user = cursor.fetchone()
+            cursor.execute("CALL pAddJoke(%s, %s);", (setup, punchline))
+            print("added joke to database")
+    except Exception as e:
+        print(e)
     finally:
         connection.close()
-    return user
+
+
+def add_user(username, password):
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+            (username, password)
+            )
+            connection.commit()
+    finally:
+            connection.close()
+
+def get_user(username):
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+            return cursor.fetchone()
+    finally:
+            connection.close()
+
+
+
+
+

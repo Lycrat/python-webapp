@@ -1,3 +1,4 @@
+from flask import render_template, request, redirect, url_for
 import random
 import os
 import jwt
@@ -38,6 +39,7 @@ def dashboard(user=None):
     return render_template('welcome.html', title='Dashboard', name=user, group='Authenticated Users')
 
 
+from application.data_access import get_joke, get_jokes_count, add_joke_to_database
 
 @app.route('/')
 @app.route('/home')
@@ -117,3 +119,17 @@ def login():
         else:
             error = 'Invalid username or password.'
     return render_template('login.html', title='Login', error=error)
+
+@app.route('/add-joke')
+def add_joke():
+    return render_template('add_joke.html', title='Add Joke')
+
+@app.route('/add-joke/submit', methods=['POST'])
+def submit_joke():
+    setup = request.form['setup']
+    punchline = request.form['punchline']
+
+
+    add_joke_to_database(setup, punchline)
+    print(f"added joke: {setup}, {punchline}")
+    return redirect(url_for('add_joke'))
